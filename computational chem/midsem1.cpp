@@ -34,6 +34,7 @@ vector<double> cheby_coff(int n)
     {
         coff[0] += func(chebnodes[i]) / n;
     }
+    cout << coff[0] << endl;
     for (int j = 1; j < n; j++)
     {
         for (int k = 0; k < n; k++)
@@ -41,6 +42,7 @@ vector<double> cheby_coff(int n)
             coff[j] += func(chebnodes[k]) * cos(j * acos(-1) * (2 * k + 1) / (2 * n));
         }
         coff[j] = 2 * coff[j] / n;
+        cout << coff[j] << endl;
     }
     return coff;
 }
