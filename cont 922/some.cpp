@@ -1,37 +1,62 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-int invpair(vector<int> a){
-    int count=0;
-    for (int i = 0; i < a.size(); i++)
+
+double newton(double x, const vector<double> &xValues, const vector<double> &yValues)
+{
+    int n = xValues.size();
+    vector<vector<double>> a(n, vector<double>(n, 0.0));
+
+    for (int i = 0; i < n; ++i)
+        a[i][0] = yValues[i];
+
+    for (int j = 1; j < n; ++j)
     {
-        for (int j = i + 1; j < a.size(); j++)
+        for (int i = 0; i < n - j; ++i)
         {
-            if (a[i] > a[j])
-            {
-                count++;
-            }
+            a[i][j] = (a[i + 1][j - 1] - a[i][j - 1]) / (xValues[i + j] - xValues[i]);
         }
     }
-    return count;
+
+    double result = a[0][0];
+    double term = 1.0;
+
+    for (int j = 1; j < n; ++j)
+    {
+        term *= (x - xValues[j - 1]);
+        result += term * a[0][j];
+    }
+
+    return result;
 }
+
+double v(double x)
+{
+    double d = (7.61 * pow(10, (-19))) / 4.35974434e-18;
+    double beta = 0.0193 / (1.88973e-2);
+    double xo = 74.1 * (1.88973e-2);
+
+    double ans = d * (1 - exp((-1) * beta * (x - xo))) * (1 - exp((-1) * beta * (x - xo)));
+    return ans;
+}
+
 int main()
 {
-    vector<int> a = {5, 4, 3, 2, 1};
-    int count=0;
-    for (int i = 0; i < a.size(); i++)
+    double start = 0;
+    double end = 8;
+
+    vector<double> xValues(20);
+    vector<double> yValues(20);
+
+    double dx = (end - start) / 20;
+    for (int i = 0; i < 20; i++)
     {
-        for (int j = i + 1; j < a.size(); j++)
-        {
-            if (a[i] > a[j])
-            {
-                count++;
-            }
-        }
+        double temp = start + i * dx;
+        xValues[i] = temp;
+        yValues[i] = v(temp);
     }
-    for (int i = 0; i < a.size(); i++)
-    {
-        cout << a[i] << " ";
-    }
-    return 0;
+    double ans1 = newton(4.5, xValues, yValues);
+    double ans2 = newton(6.5, xValues, yValues);
+
+    cout << ans1 << endl;
+    cout << ans2 << endl;
 }

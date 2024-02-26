@@ -39,7 +39,7 @@ public:
         {
             for (int k = 0; k < n; k++)
             {
-                cheb_coff[j] += exp(cheb_node[k]) * cos(j * PI * (2 * k + 1) / (2 * n));
+                cheb_coff[j] += sin(PI * cheb_node[k]) * cos(j * PI * (2 * k + 1) / (2 * n));
             }
             cheb_coff[j] = 2 * cheb_coff[j] / n;
         }
@@ -95,17 +95,18 @@ signed main()
     Chebyshev Obj;
     cout << Obj.cheb_poly(3, 1) << endl;
     Obj.func();
-    vector<double> xValues = {1,2.0, 3.0,4,5,6,7};
+    vector<double> xValues = {1, 2.0, 3.0, 4, 5, 6, 7};
     vector<double> yValues;
 
-    for (const auto& x : xValues) {
+    for (const auto &x : xValues)
+    {
         yValues.push_back(log(x));
     }
 
     NewtonInterpolation onj2;
     double xToInterpolate = 2.5;
-    double result = onj2.newtonInterpolation(xToInterpolate, xValues, yValues);   
-                                                                                                                                
-    cout << "log(2.5) is approximately: " << result/log(10) << endl;
+    double result = onj2.newtonInterpolation(xToInterpolate, xValues, yValues);
+
+    cout << "log(2.5) is approximately: " << result / log(10) << endl;
     return 0;
 }
