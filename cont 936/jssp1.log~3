@@ -1,0 +1,90 @@
+--- Job jssp.gms Start 04/06/24 00:01:24 45.7.0 64fbf3ce WEX-WEI x86 64bit/MS Windows
+--- Applying:
+    C:\GAMS\45\gmsprmNT.txt
+--- GAMS Parameters defined
+    Input "C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms"
+    PageSize 0
+    ScrDir "C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\225a\"
+    SysDir C:\GAMS\45\
+    LogOption 3
+    ErrMsg 1
+    ErrorLog 99
+    IDE 1
+    LstTitleLeftAligned 1
+Licensee: GAMS Community License for Sayan Dey Sarkar    G240209|0002AO-GEN
+          Indian Institute of Technology Guwahati,                  CL10139
+          C:\Users\Sayan Dey Sarkar\Documents\GAMS\gamslice.txt
+          Sayan Dey Sarkar, s.sayan@iitg.ac.in                             
+          Community license for demonstration and instructional purposes only
+Processor information: 1 socket(s), 4 core(s), and 8 thread(s) available
+GAMS 45.7.0   Copyright (C) 1987-2024 GAMS Development. All rights reserved
+--- Starting compilation
+--- jssp.gms(29) 3 Mb 2 Errors
+*** Error 125 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set is under control already
+*** Error 125 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set is under control already
+--- jssp.gms(33) 3 Mb 5 Errors
+*** Error 125 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set is under control already
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+--- jssp.gms(34) 3 Mb 11 Errors
+*** Error 154 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set for 'ord' is not controlled
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+--- jssp.gms(35) 3 Mb 15 Errors
+*** Error 154 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set for 'ord' is not controlled
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 148 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Dimension different - The symbol is referenced with more/less
+       indices as declared
+--- jssp.gms(36) 3 Mb 19 Errors
+*** Error 154 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set for 'ord' is not controlled
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 148 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Dimension different - The symbol is referenced with more/less
+       indices as declared
+*** Error 148 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Dimension different - The symbol is referenced with more/less
+       indices as declared
+--- jssp.gms(37) 3 Mb 26 Errors
+*** Error 154 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Set for 'ord' is not controlled
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 148 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Dimension different - The symbol is referenced with more/less
+       indices as declared
+*** Error 148 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Dimension different - The symbol is referenced with more/less
+       indices as declared
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+*** Error 149 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Uncontrolled set entered as constant
+--- jssp.gms(40) 3 Mb 27 Errors
+*** Error 257 in C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+    Solve statement not checked because of previous errors
+--- jssp.gms(40) 3 Mb 27 Errors
+*** Status: Compilation error(s)
+--- Job jssp.gms Stop 04/06/24 00:01:24 elapsed 0:00:00.023

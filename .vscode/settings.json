@@ -59,6 +59,7 @@
   "C_Cpp.errorSquiggles": "enabled",
   "files.associations": {
     ".env*": "dotenv",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "cmath": "cpp"
   }
 }

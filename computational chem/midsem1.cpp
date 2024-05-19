@@ -3,10 +3,11 @@ using namespace std;
 
 vector<double> nodes(int n)
 {
+    int b = 5, a = -5;
     vector<double> ans(n);
     for (int i = 0; i < n; i++)
     {
-        ans[i] = cos((2 * i + 1) * acos(-1) / (2 * n)) * 5;
+        ans[i] = cos((2 * i + 1) * acos(-1) / (2 * n)) * ((b - a) + (b + a)) / 2;
     }
     return ans;
 }
@@ -42,7 +43,6 @@ vector<double> cheby_coff(int n)
             coff[j] += func(chebnodes[k]) * cos(j * acos(-1) * (2 * k + 1) / (2 * n));
         }
         coff[j] = 2 * coff[j] / n;
-        cout << coff[j] << endl;
     }
     return coff;
 }

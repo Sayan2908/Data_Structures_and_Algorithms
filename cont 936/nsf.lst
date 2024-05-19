@@ -1,0 +1,754 @@
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:31:30 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  Sets
+   2      i proposals /1*10/
+   3      j reviewers /1*5/;
+   4   
+   5   
+   6  Parameters
+   7      N  no. of proposals /10/
+   8      M  no. of reviewers /5/
+   9      K  no. of reviews for each proposal /4/
+  10      alpha contrains 2-22 /1000/
+  11      epsilon small value /0.000001/;
+  12   
+  13   
+  14  Table w(i,j) preference (j) for each proposal (i)
+  15          1   2   3   4   5
+  16       1  3   5   18  3   0
+  17       2  6   6   8   2   1
+  18       3  6   2   6   1   4
+  19       4  0   2   5   8   6
+  20       5  1   4   6   9   2
+  21       6  10  6   5   3   3
+  22       7  8   9   7   4   5
+  23       8  6   8   1   5   0
+  24       9  10  9   5   8   7
+  25       10 3   10  8   4   10;
+  26   
+  27  alias(j,jj);
+  28   
+  29  Binary Variables y(i,j), L(i,j), S(i,j), R1(i,j), R2(i,j), x(i,j,jj);
+  30  Positive Variables sl(i,j,jj),temp(j,jj);
+  31  Variable Obj;
+  32   
+  33  Equations Eq1(j),Eq2(j),Eq3(j),Eq4(j),Eq5(j),Eq6(j),Eq7(j),Eq8(j),E3(i),Ea3(i),Eb3(i),Ec3(i),E4(i,j),
+  34  Ea5(i,j),Eb5(i,j),Ec5(i,j),Ea6(i,j,jj),Eb6(i,j,jj),Ea7(i,j,jj),E8,E9(j,jj),Eb7(i,j,jj), Ee1(j), Ee2(j),Ed3(i),Ed5(i,j),Ec6(i,j,jj);
+  35   
+  36  Eq1(j).. sum(i,y(i,j)) =l= ceil(N*K/M);
+  37  Eq2(j).. sum(i,y(i,j)) =g= floor(N*K/M);
+  38   
+  39  Eq3(j).. sum(i,L(i,j)) =l= ceil(N/M);
+  40  Eq4(j).. sum(i,L(i,j)) =g= floor(N/M);
+  41   
+  42  Eq5(j).. sum(i,S(i,j)) =l= ceil(N/M);
+  43  Eq6(j).. sum(i,S(i,j)) =g= floor(N/M);
+  44   
+  45  Eq7(j).. sum(i,R1(i,j)) =l= ceil(N/M);
+  46  Eq8(j).. sum(i,R1(i,j)) =g= floor(N/M);
+  47   
+  48  Ee1(j).. sum(i,R2(i,j)) =l= ceil(N/M);
+  49  Ee2(j).. sum(i,R2(i,j)) =g= floor(N/M);
+  50   
+  51  E3(i).. sum(j,y(i,j)) =e= K;
+  52  Ea3(i).. sum(j,L(i,j)) =e= 1;
+  53  Eb3(i).. sum(j,S(i,j)) =e= 1;
+  54  Ec3(i).. sum(j,R1(i,j)) =e= 1;
+  55  Ed3(i).. sum(j,R2(i,j)) =e= 1;
+  56   
+  57  E4(i,j).. L(i,j) + S(i,j) +  R1(i,j) + R2(i,j)=e= y(i,j);
+  58   
+  59  Ea5(i,j).. L(i,j) =l= y(i,j);
+  60  Eb5(i,j).. S(i,j) =l= y(i,j);
+  61  Ec5(i,j).. R1(i,j) =l= y(i,j);
+  62  Ed5(i,j).. R2(i,j) =l= y(i,j);
+  63   
+  64  Ea6(i,j,jj)$(ord(j) <> ord(jj)).. L(i,j) + S(i,jj) - x(i,j,jj) =l= 1;
+  65  Eb6(i,j,jj)$(ord(j) <> ord(jj)).. S(i,j) + R1(i,jj) - x(i,j,jj) =l= 1;
+  66  Ec6(i,j,jj)$(ord(j) <> ord(jj)).. R1(i,j) + R2(i,jj) - x(i,j,jj) =l= 1;
+  67   
+  68  Ea7(i,j,jj)$(ord(j) <> ord(jj)).. -N*(1-x(i,j,jj)) =l= w(i,jj) - w(i,j) + sl(i,j,jj);
+  69  Eb7(i,j,jj)$(ord(j) <> ord(jj)).. w(i,jj) - w(i,j) + sl(i,j,jj) =l= N*x(i,j,jj) - epsilon;
+  70   
+  71  E8.. Obj =e= sum(i,sum(j,w(i,j)*y(i,j))) + alpha*sum(j,sum(jj,temp(j,jj)));
+  72  E9(j,jj)$(ord(j) <> ord(jj)).. temp(j,jj) =e= sum(i,sl(i,j,jj));
+  73   
+  74   
+  75  model NSF /all/;
+  76   
+  77  solve NSF using mip minimizing Obj;
+
+
+COMPILATION TIME     =        0.000 SECONDS      3 MB  45.7.0 64fbf3ce WEX-WEI
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:31:30 Page 2
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Equation Listing    SOLVE NSF Using MIP From line 77
+
+
+---- Eq1  =L=  
+
+Eq1(1)..  y(1,1) + y(2,1) + y(3,1) + y(4,1) + y(5,1) + y(6,1) + y(7,1) + y(8,1) + y(9,1) + y(10,1) =L= 8 ; (LHS = 0)
+     
+Eq1(2)..  y(1,2) + y(2,2) + y(3,2) + y(4,2) + y(5,2) + y(6,2) + y(7,2) + y(8,2) + y(9,2) + y(10,2) =L= 8 ; (LHS = 0)
+     
+Eq1(3)..  y(1,3) + y(2,3) + y(3,3) + y(4,3) + y(5,3) + y(6,3) + y(7,3) + y(8,3) + y(9,3) + y(10,3) =L= 8 ; (LHS = 0)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq2  =G=  
+
+Eq2(1)..  y(1,1) + y(2,1) + y(3,1) + y(4,1) + y(5,1) + y(6,1) + y(7,1) + y(8,1) + y(9,1) + y(10,1) =G= 8 ; (LHS = 0, INFES = 8 ****)
+     
+Eq2(2)..  y(1,2) + y(2,2) + y(3,2) + y(4,2) + y(5,2) + y(6,2) + y(7,2) + y(8,2) + y(9,2) + y(10,2) =G= 8 ; (LHS = 0, INFES = 8 ****)
+     
+Eq2(3)..  y(1,3) + y(2,3) + y(3,3) + y(4,3) + y(5,3) + y(6,3) + y(7,3) + y(8,3) + y(9,3) + y(10,3) =G= 8 ; (LHS = 0, INFES = 8 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq3  =L=  
+
+Eq3(1)..  L(1,1) + L(2,1) + L(3,1) + L(4,1) + L(5,1) + L(6,1) + L(7,1) + L(8,1) + L(9,1) + L(10,1) =L= 2 ; (LHS = 0)
+     
+Eq3(2)..  L(1,2) + L(2,2) + L(3,2) + L(4,2) + L(5,2) + L(6,2) + L(7,2) + L(8,2) + L(9,2) + L(10,2) =L= 2 ; (LHS = 0)
+     
+Eq3(3)..  L(1,3) + L(2,3) + L(3,3) + L(4,3) + L(5,3) + L(6,3) + L(7,3) + L(8,3) + L(9,3) + L(10,3) =L= 2 ; (LHS = 0)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq4  =G=  
+
+Eq4(1)..  L(1,1) + L(2,1) + L(3,1) + L(4,1) + L(5,1) + L(6,1) + L(7,1) + L(8,1) + L(9,1) + L(10,1) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Eq4(2)..  L(1,2) + L(2,2) + L(3,2) + L(4,2) + L(5,2) + L(6,2) + L(7,2) + L(8,2) + L(9,2) + L(10,2) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Eq4(3)..  L(1,3) + L(2,3) + L(3,3) + L(4,3) + L(5,3) + L(6,3) + L(7,3) + L(8,3) + L(9,3) + L(10,3) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq5  =L=  
+
+Eq5(1)..  S(1,1) + S(2,1) + S(3,1) + S(4,1) + S(5,1) + S(6,1) + S(7,1) + S(8,1) + S(9,1) + S(10,1) =L= 2 ; (LHS = 0)
+     
+Eq5(2)..  S(1,2) + S(2,2) + S(3,2) + S(4,2) + S(5,2) + S(6,2) + S(7,2) + S(8,2) + S(9,2) + S(10,2) =L= 2 ; (LHS = 0)
+     
+Eq5(3)..  S(1,3) + S(2,3) + S(3,3) + S(4,3) + S(5,3) + S(6,3) + S(7,3) + S(8,3) + S(9,3) + S(10,3) =L= 2 ; (LHS = 0)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq6  =G=  
+
+Eq6(1)..  S(1,1) + S(2,1) + S(3,1) + S(4,1) + S(5,1) + S(6,1) + S(7,1) + S(8,1) + S(9,1) + S(10,1) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Eq6(2)..  S(1,2) + S(2,2) + S(3,2) + S(4,2) + S(5,2) + S(6,2) + S(7,2) + S(8,2) + S(9,2) + S(10,2) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Eq6(3)..  S(1,3) + S(2,3) + S(3,3) + S(4,3) + S(5,3) + S(6,3) + S(7,3) + S(8,3) + S(9,3) + S(10,3) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq7  =L=  
+
+Eq7(1)..  R1(1,1) + R1(2,1) + R1(3,1) + R1(4,1) + R1(5,1) + R1(6,1) + R1(7,1) + R1(8,1) + R1(9,1) + R1(10,1) =L= 2 ; (LHS = 0)
+     
+Eq7(2)..  R1(1,2) + R1(2,2) + R1(3,2) + R1(4,2) + R1(5,2) + R1(6,2) + R1(7,2) + R1(8,2) + R1(9,2) + R1(10,2) =L= 2 ; (LHS = 0)
+     
+Eq7(3)..  R1(1,3) + R1(2,3) + R1(3,3) + R1(4,3) + R1(5,3) + R1(6,3) + R1(7,3) + R1(8,3) + R1(9,3) + R1(10,3) =L= 2 ; (LHS = 0)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Eq8  =G=  
+
+Eq8(1)..  R1(1,1) + R1(2,1) + R1(3,1) + R1(4,1) + R1(5,1) + R1(6,1) + R1(7,1) + R1(8,1) + R1(9,1) + R1(10,1) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Eq8(2)..  R1(1,2) + R1(2,2) + R1(3,2) + R1(4,2) + R1(5,2) + R1(6,2) + R1(7,2) + R1(8,2) + R1(9,2) + R1(10,2) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Eq8(3)..  R1(1,3) + R1(2,3) + R1(3,3) + R1(4,3) + R1(5,3) + R1(6,3) + R1(7,3) + R1(8,3) + R1(9,3) + R1(10,3) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- E3  =E=  
+
+E3(1)..  y(1,1) + y(1,2) + y(1,3) + y(1,4) + y(1,5) =E= 4 ; (LHS = 0, INFES = 4 ****)
+     
+E3(2)..  y(2,1) + y(2,2) + y(2,3) + y(2,4) + y(2,5) =E= 4 ; (LHS = 0, INFES = 4 ****)
+     
+E3(3)..  y(3,1) + y(3,2) + y(3,3) + y(3,4) + y(3,5) =E= 4 ; (LHS = 0, INFES = 4 ****)
+     
+REMAINING 7 ENTRIES SKIPPED
+
+
+---- Ea3  =E=  
+
+Ea3(1)..  L(1,1) + L(1,2) + L(1,3) + L(1,4) + L(1,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Ea3(2)..  L(2,1) + L(2,2) + L(2,3) + L(2,4) + L(2,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Ea3(3)..  L(3,1) + L(3,2) + L(3,3) + L(3,4) + L(3,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 7 ENTRIES SKIPPED
+
+
+---- Eb3  =E=  
+
+Eb3(1)..  S(1,1) + S(1,2) + S(1,3) + S(1,4) + S(1,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Eb3(2)..  S(2,1) + S(2,2) + S(2,3) + S(2,4) + S(2,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Eb3(3)..  S(3,1) + S(3,2) + S(3,3) + S(3,4) + S(3,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 7 ENTRIES SKIPPED
+
+
+---- Ec3  =E=  
+
+Ec3(1)..  R1(1,1) + R1(1,2) + R1(1,3) + R1(1,4) + R1(1,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Ec3(2)..  R1(2,1) + R1(2,2) + R1(2,3) + R1(2,4) + R1(2,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Ec3(3)..  R1(3,1) + R1(3,2) + R1(3,3) + R1(3,4) + R1(3,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 7 ENTRIES SKIPPED
+
+
+---- E4  =E=  
+
+E4(1,1)..  - y(1,1) + L(1,1) + S(1,1) + R1(1,1) + R2(1,1) =E= 0 ; (LHS = 0)
+     
+E4(1,2)..  - y(1,2) + L(1,2) + S(1,2) + R1(1,2) + R2(1,2) =E= 0 ; (LHS = 0)
+     
+E4(1,3)..  - y(1,3) + L(1,3) + S(1,3) + R1(1,3) + R2(1,3) =E= 0 ; (LHS = 0)
+     
+REMAINING 47 ENTRIES SKIPPED
+
+
+---- Ea5  =L=  
+
+Ea5(1,1)..  - y(1,1) + L(1,1) =L= 0 ; (LHS = 0)
+     
+Ea5(1,2)..  - y(1,2) + L(1,2) =L= 0 ; (LHS = 0)
+     
+Ea5(1,3)..  - y(1,3) + L(1,3) =L= 0 ; (LHS = 0)
+     
+REMAINING 47 ENTRIES SKIPPED
+
+
+---- Eb5  =L=  
+
+Eb5(1,1)..  - y(1,1) + S(1,1) =L= 0 ; (LHS = 0)
+     
+Eb5(1,2)..  - y(1,2) + S(1,2) =L= 0 ; (LHS = 0)
+     
+Eb5(1,3)..  - y(1,3) + S(1,3) =L= 0 ; (LHS = 0)
+     
+REMAINING 47 ENTRIES SKIPPED
+
+
+---- Ec5  =L=  
+
+Ec5(1,1)..  - y(1,1) + R1(1,1) =L= 0 ; (LHS = 0)
+     
+Ec5(1,2)..  - y(1,2) + R1(1,2) =L= 0 ; (LHS = 0)
+     
+Ec5(1,3)..  - y(1,3) + R1(1,3) =L= 0 ; (LHS = 0)
+     
+REMAINING 47 ENTRIES SKIPPED
+
+
+---- Ea6  =L=  
+
+Ea6(1,1,2)..  L(1,1) + S(1,2) - x(1,1,2) =L= 1 ; (LHS = 0)
+     
+Ea6(1,1,3)..  L(1,1) + S(1,3) - x(1,1,3) =L= 1 ; (LHS = 0)
+     
+Ea6(1,1,4)..  L(1,1) + S(1,4) - x(1,1,4) =L= 1 ; (LHS = 0)
+     
+REMAINING 197 ENTRIES SKIPPED
+
+
+---- Eb6  =L=  
+
+Eb6(1,1,2)..  S(1,1) + R1(1,2) - x(1,1,2) =L= 1 ; (LHS = 0)
+     
+Eb6(1,1,3)..  S(1,1) + R1(1,3) - x(1,1,3) =L= 1 ; (LHS = 0)
+     
+Eb6(1,1,4)..  S(1,1) + R1(1,4) - x(1,1,4) =L= 1 ; (LHS = 0)
+     
+REMAINING 197 ENTRIES SKIPPED
+
+
+---- Ea7  =L=  
+
+Ea7(1,1,2)..  10*x(1,1,2) - sl(1,1,2) =L= 12 ; (LHS = 0)
+     
+Ea7(1,1,3)..  10*x(1,1,3) - sl(1,1,3) =L= 25 ; (LHS = 0)
+     
+Ea7(1,1,4)..  10*x(1,1,4) - sl(1,1,4) =L= 10 ; (LHS = 0)
+     
+REMAINING 197 ENTRIES SKIPPED
+
+
+---- E8  =E=  
+
+E8..  - 3*y(1,1) - 5*y(1,2) - 18*y(1,3) - 3*y(1,4) - 6*y(2,1) - 6*y(2,2) - 8*y(2,3) - 2*y(2,4) - y(2,5) - 6*y(3,1) - 2*y(3,2) - 6*y(3,3) - y(3,4) - 4*y(3,5) - 2*y(4,2) - 5*y(4,3) - 8*y(4,4) - 6*y(4,5) - y(5,1) - 4*y(5,2) - 6*y(5,3) - 9*y(5,4) - 2*y(5,5) - 10*y(6,1) - 6*y(6,2) - 5*y(6,3) - 3*y(6,4) - 3*y(6,5) - 8*y(7,1) - 9*y(7,2) - 7*y(7,3) - 4*y(7,4) - 5*y(7,5) - 6*y(8,1) - 8*y(8,2) - y(8,3) - 5*y(8,4) - 10*y(9,1) - 9*y(9,2) - 5*y(9,3) - 8*y(9,4) - 7*y(9,5) - 3*y(10,1) - 10*y(10,2) - 8*y(10,3) - 4*y(10,4) - 10*y(10,5) - 1000*temp(1,1) - 1000*temp(1,2) - 1000*temp(1,3) - 1000*temp(1,4) - 1000*temp(1,5) - 1000*temp(2,1) - 1000*temp(2,2) - 1000*temp(2,3) - 1000*temp(2,4) - 1000*temp(2,5) - 1000*temp(3,1) - 1000*temp(3,2) - 1000*temp(3,3) - 1000*temp(3,4) - 1000*temp(3,5) - 1000*temp(4,1) - 1000*temp(4,2) - 1000*temp(4,3) - 1000*temp(4,4) - 1000*temp(4,5) - 1000*temp(5,1) - 1000*temp(5,2) - 1000*temp(5,3) - 1000*temp(5,4) - 1000*temp(5,5) + Obj =E= 0 ; (LHS = 0)
+     
+
+---- E9  =E=  
+
+E9(1,2)..  - sl(1,1,2) - sl(2,1,2) - sl(3,1,2) - sl(4,1,2) - sl(5,1,2) - sl(6,1,2) - sl(7,1,2) - sl(8,1,2) - sl(9,1,2) - sl(10,1,2) + temp(1,2) =E= 0 ; (LHS = 0)
+     
+E9(1,3)..  - sl(1,1,3) - sl(2,1,3) - sl(3,1,3) - sl(4,1,3) - sl(5,1,3) - sl(6,1,3) - sl(7,1,3) - sl(8,1,3) - sl(9,1,3) - sl(10,1,3) + temp(1,3) =E= 0 ; (LHS = 0)
+     
+E9(1,4)..  - sl(1,1,4) - sl(2,1,4) - sl(3,1,4) - sl(4,1,4) - sl(5,1,4) - sl(6,1,4) - sl(7,1,4) - sl(8,1,4) - sl(9,1,4) - sl(10,1,4) + temp(1,4) =E= 0 ; (LHS = 0)
+     
+REMAINING 17 ENTRIES SKIPPED
+
+
+---- Eb7  =L=  
+
+Eb7(1,1,2)..  - 10*x(1,1,2) + sl(1,1,2) =L= -2.000001 ; (LHS = 0, INFES = 2.000001 ****)
+     
+Eb7(1,1,3)..  - 10*x(1,1,3) + sl(1,1,3) =L= -15.000001 ; (LHS = 0, INFES = 15.000001 ****)
+     
+Eb7(1,1,4)..  - 10*x(1,1,4) + sl(1,1,4) =L= -1E-6 ; (LHS = 0, INFES = 1E-6 ****)
+     
+REMAINING 197 ENTRIES SKIPPED
+
+
+---- Ee1  =L=  
+
+Ee1(1)..  R2(1,1) + R2(2,1) + R2(3,1) + R2(4,1) + R2(5,1) + R2(6,1) + R2(7,1) + R2(8,1) + R2(9,1) + R2(10,1) =L= 2 ; (LHS = 0)
+     
+Ee1(2)..  R2(1,2) + R2(2,2) + R2(3,2) + R2(4,2) + R2(5,2) + R2(6,2) + R2(7,2) + R2(8,2) + R2(9,2) + R2(10,2) =L= 2 ; (LHS = 0)
+     
+Ee1(3)..  R2(1,3) + R2(2,3) + R2(3,3) + R2(4,3) + R2(5,3) + R2(6,3) + R2(7,3) + R2(8,3) + R2(9,3) + R2(10,3) =L= 2 ; (LHS = 0)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Ee2  =G=  
+
+Ee2(1)..  R2(1,1) + R2(2,1) + R2(3,1) + R2(4,1) + R2(5,1) + R2(6,1) + R2(7,1) + R2(8,1) + R2(9,1) + R2(10,1) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Ee2(2)..  R2(1,2) + R2(2,2) + R2(3,2) + R2(4,2) + R2(5,2) + R2(6,2) + R2(7,2) + R2(8,2) + R2(9,2) + R2(10,2) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+Ee2(3)..  R2(1,3) + R2(2,3) + R2(3,3) + R2(4,3) + R2(5,3) + R2(6,3) + R2(7,3) + R2(8,3) + R2(9,3) + R2(10,3) =G= 2 ; (LHS = 0, INFES = 2 ****)
+     
+REMAINING 2 ENTRIES SKIPPED
+
+
+---- Ed3  =E=  
+
+Ed3(1)..  R2(1,1) + R2(1,2) + R2(1,3) + R2(1,4) + R2(1,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Ed3(2)..  R2(2,1) + R2(2,2) + R2(2,3) + R2(2,4) + R2(2,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+Ed3(3)..  R2(3,1) + R2(3,2) + R2(3,3) + R2(3,4) + R2(3,5) =E= 1 ; (LHS = 0, INFES = 1 ****)
+     
+REMAINING 7 ENTRIES SKIPPED
+
+
+---- Ed5  =L=  
+
+Ed5(1,1)..  - y(1,1) + R2(1,1) =L= 0 ; (LHS = 0)
+     
+Ed5(1,2)..  - y(1,2) + R2(1,2) =L= 0 ; (LHS = 0)
+     
+Ed5(1,3)..  - y(1,3) + R2(1,3) =L= 0 ; (LHS = 0)
+     
+REMAINING 47 ENTRIES SKIPPED
+
+
+---- Ec6  =L=  
+
+Ec6(1,1,2)..  R1(1,1) + R2(1,2) - x(1,1,2) =L= 1 ; (LHS = 0)
+     
+Ec6(1,1,3)..  R1(1,1) + R2(1,3) - x(1,1,3) =L= 1 ; (LHS = 0)
+     
+Ec6(1,1,4)..  R1(1,1) + R2(1,4) - x(1,1,4) =L= 1 ; (LHS = 0)
+     
+REMAINING 197 ENTRIES SKIPPED
+
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:31:30 Page 3
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Column Listing      SOLVE NSF Using MIP From line 77
+
+
+---- y  
+
+y(1,1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq1(1)
+        1       Eq2(1)
+        1       E3(1)
+       -1       E4(1,1)
+       -1       Ea5(1,1)
+       -1       Eb5(1,1)
+       -1       Ec5(1,1)
+       -3       E8
+       -1       Ed5(1,1)
+
+y(1,2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq1(2)
+        1       Eq2(2)
+        1       E3(1)
+       -1       E4(1,2)
+       -1       Ea5(1,2)
+       -1       Eb5(1,2)
+       -1       Ec5(1,2)
+       -5       E8
+       -1       Ed5(1,2)
+
+y(1,3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq1(3)
+        1       Eq2(3)
+        1       E3(1)
+       -1       E4(1,3)
+       -1       Ea5(1,3)
+       -1       Eb5(1,3)
+       -1       Ec5(1,3)
+      -18       E8
+       -1       Ed5(1,3)
+
+REMAINING 47 ENTRIES SKIPPED
+
+---- L  
+
+L(1,1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq3(1)
+        1       Eq4(1)
+        1       Ea3(1)
+        1       E4(1,1)
+        1       Ea5(1,1)
+        1       Ea6(1,1,2)
+        1       Ea6(1,1,3)
+        1       Ea6(1,1,4)
+        1       Ea6(1,1,5)
+
+L(1,2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq3(2)
+        1       Eq4(2)
+        1       Ea3(1)
+        1       E4(1,2)
+        1       Ea5(1,2)
+        1       Ea6(1,2,1)
+        1       Ea6(1,2,3)
+        1       Ea6(1,2,4)
+        1       Ea6(1,2,5)
+
+L(1,3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq3(3)
+        1       Eq4(3)
+        1       Ea3(1)
+        1       E4(1,3)
+        1       Ea5(1,3)
+        1       Ea6(1,3,1)
+        1       Ea6(1,3,2)
+        1       Ea6(1,3,4)
+        1       Ea6(1,3,5)
+
+REMAINING 47 ENTRIES SKIPPED
+
+---- S  
+
+S(1,1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq5(1)
+        1       Eq6(1)
+        1       Eb3(1)
+        1       E4(1,1)
+        1       Eb5(1,1)
+        1       Ea6(1,2,1)
+        1       Ea6(1,3,1)
+        1       Ea6(1,4,1)
+        1       Ea6(1,5,1)
+        1       Eb6(1,1,2)
+        1       Eb6(1,1,3)
+        1       Eb6(1,1,4)
+        1       Eb6(1,1,5)
+
+S(1,2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq5(2)
+        1       Eq6(2)
+        1       Eb3(1)
+        1       E4(1,2)
+        1       Eb5(1,2)
+        1       Ea6(1,1,2)
+        1       Ea6(1,3,2)
+        1       Ea6(1,4,2)
+        1       Ea6(1,5,2)
+        1       Eb6(1,2,1)
+        1       Eb6(1,2,3)
+        1       Eb6(1,2,4)
+        1       Eb6(1,2,5)
+
+S(1,3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq5(3)
+        1       Eq6(3)
+        1       Eb3(1)
+        1       E4(1,3)
+        1       Eb5(1,3)
+        1       Ea6(1,1,3)
+        1       Ea6(1,2,3)
+        1       Ea6(1,4,3)
+        1       Ea6(1,5,3)
+        1       Eb6(1,3,1)
+        1       Eb6(1,3,2)
+        1       Eb6(1,3,4)
+        1       Eb6(1,3,5)
+
+REMAINING 47 ENTRIES SKIPPED
+
+---- R1  
+
+R1(1,1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq7(1)
+        1       Eq8(1)
+        1       Ec3(1)
+        1       E4(1,1)
+        1       Ec5(1,1)
+        1       Eb6(1,2,1)
+        1       Eb6(1,3,1)
+        1       Eb6(1,4,1)
+        1       Eb6(1,5,1)
+        1       Ec6(1,1,2)
+        1       Ec6(1,1,3)
+        1       Ec6(1,1,4)
+        1       Ec6(1,1,5)
+
+R1(1,2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq7(2)
+        1       Eq8(2)
+        1       Ec3(1)
+        1       E4(1,2)
+        1       Ec5(1,2)
+        1       Eb6(1,1,2)
+        1       Eb6(1,3,2)
+        1       Eb6(1,4,2)
+        1       Eb6(1,5,2)
+        1       Ec6(1,2,1)
+        1       Ec6(1,2,3)
+        1       Ec6(1,2,4)
+        1       Ec6(1,2,5)
+
+R1(1,3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       Eq7(3)
+        1       Eq8(3)
+        1       Ec3(1)
+        1       E4(1,3)
+        1       Ec5(1,3)
+        1       Eb6(1,1,3)
+        1       Eb6(1,2,3)
+        1       Eb6(1,4,3)
+        1       Eb6(1,5,3)
+        1       Ec6(1,3,1)
+        1       Ec6(1,3,2)
+        1       Ec6(1,3,4)
+        1       Ec6(1,3,5)
+
+REMAINING 47 ENTRIES SKIPPED
+
+---- R2  
+
+R2(1,1)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       E4(1,1)
+        1       Ee1(1)
+        1       Ee2(1)
+        1       Ed3(1)
+        1       Ed5(1,1)
+        1       Ec6(1,2,1)
+        1       Ec6(1,3,1)
+        1       Ec6(1,4,1)
+        1       Ec6(1,5,1)
+
+R2(1,2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       E4(1,2)
+        1       Ee1(2)
+        1       Ee2(2)
+        1       Ed3(1)
+        1       Ed5(1,2)
+        1       Ec6(1,1,2)
+        1       Ec6(1,3,2)
+        1       Ec6(1,4,2)
+        1       Ec6(1,5,2)
+
+R2(1,3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+        1       E4(1,3)
+        1       Ee1(3)
+        1       Ee2(3)
+        1       Ed3(1)
+        1       Ed5(1,3)
+        1       Ec6(1,1,3)
+        1       Ec6(1,2,3)
+        1       Ec6(1,4,3)
+        1       Ec6(1,5,3)
+
+REMAINING 47 ENTRIES SKIPPED
+
+---- x  
+
+x(1,1,2)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       -1       Ea6(1,1,2)
+       -1       Eb6(1,1,2)
+       10       Ea7(1,1,2)
+      -10       Eb7(1,1,2)
+       -1       Ec6(1,1,2)
+
+x(1,1,3)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       -1       Ea6(1,1,3)
+       -1       Eb6(1,1,3)
+       10       Ea7(1,1,3)
+      -10       Eb7(1,1,3)
+       -1       Ec6(1,1,3)
+
+x(1,1,4)
+                (.LO, .L, .UP, .M = 0, 0, 1, 0)
+       -1       Ea6(1,1,4)
+       -1       Eb6(1,1,4)
+       10       Ea7(1,1,4)
+      -10       Eb7(1,1,4)
+       -1       Ec6(1,1,4)
+
+REMAINING 197 ENTRIES SKIPPED
+
+---- sl  
+
+sl(1,1,2)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -1       Ea7(1,1,2)
+       -1       E9(1,2)
+        1       Eb7(1,1,2)
+
+sl(1,1,3)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -1       Ea7(1,1,3)
+       -1       E9(1,3)
+        1       Eb7(1,1,3)
+
+sl(1,1,4)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+       -1       Ea7(1,1,4)
+       -1       E9(1,4)
+        1       Eb7(1,1,4)
+
+REMAINING 197 ENTRIES SKIPPED
+
+---- temp  
+
+temp(1,1)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+    -1000       E8
+
+temp(1,2)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+    -1000       E8
+        1       E9(1,2)
+
+temp(1,3)
+                (.LO, .L, .UP, .M = 0, 0, +INF, 0)
+    -1000       E8
+        1       E9(1,3)
+
+REMAINING 22 ENTRIES SKIPPED
+
+---- Obj  
+
+Obj
+                (.LO, .L, .UP, .M = -INF, 0, +INF, 0)
+        1       E8
+
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:31:30 Page 4
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Range Statistics    SOLVE NSF Using MIP From line 77
+
+
+RANGE STATISTICS (ABSOLUTE NON-ZERO FINITE VALUES)
+
+RHS       [min, max] : [ 1.000E-06, 2.800E+01] - Zero values observed as well
+Bound     [min, max] : [ 1.000E+00, 1.000E+00] - Zero values observed as well
+Matrix    [min, max] : [ 1.000E+00, 1.000E+03]
+
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:31:30 Page 5
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Model Statistics    SOLVE NSF Using MIP From line 77
+
+
+MODEL STATISTICS
+
+BLOCKS OF EQUATIONS          27     SINGLE EQUATIONS        1,371
+BLOCKS OF VARIABLES           9     SINGLE VARIABLES          676
+NON ZERO ELEMENTS         4,293     DISCRETE VARIABLES        450
+
+
+GENERATION TIME      =        0.016 SECONDS      4 MB  45.7.0 64fbf3ce WEX-WEI
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:31:30 Page 6
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+Solution Report     SOLVE NSF Using MIP From line 77
+
+
+               S O L V E      S U M M A R Y
+
+     MODEL   NSF                 OBJECTIVE  Obj
+     TYPE    MIP                 DIRECTION  MINIMIZE
+     SOLVER  CPLEX               FROM LINE  77
+
+**** SOLVER STATUS     1 Normal Completion
+**** MODEL STATUS      10 Integer Infeasible
+**** OBJECTIVE VALUE               NA
+
+ RESOURCE USAGE, LIMIT          0.000 10000000000.000
+ ITERATION COUNT, LIMIT         0    2147483647
+*** This solver runs with a community license. No commercial use.
+--- GMO setup time: 0.00s
+--- Space for names approximately 0.03 Mb
+--- Use option 'names no' to turn use of names off
+--- GMO memory 0.73 Mb (peak 0.74 Mb)
+--- Dictionary memory 0.00 Mb
+--- Cplex 22.1.1.0 link memory 0.03 Mb (peak 0.13 Mb)
+--- Starting Cplex
+
+
+--- MIP status (103): integer infeasible.
+--- Cplex Time: 0.00sec (det. 0.41 ticks)
+
+--- Problem is integer infeasible
+
+No solution returned
+
+
+EXECUTION TIME       =        0.063 SECONDS      4 MB  45.7.0 64fbf3ce WEX-WEI
+
+
+USER: GAMS Community License for Sayan Dey Sarkar    G240209|0002AO-GEN
+      Indian Institute of Technology Guwahati,                  CL10139
+      License for teaching and research at degree granting institutions
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\nsf.gms
+Output     C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\nsf.lst

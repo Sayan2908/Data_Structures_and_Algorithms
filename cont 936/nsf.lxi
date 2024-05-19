@@ -1,0 +1,42 @@
+B 3 C o m p i l a t i o n
+B 88 Equation Listing    SOLVE NSF Using MIP From line 77
+D 91 Eq1
+D 102 Eq2
+D 113 Eq3
+D 124 Eq4
+D 135 Eq5
+D 146 Eq6
+D 157 Eq7
+D 168 Eq8
+D 179 E3
+D 190 Ea3
+D 201 Eb3
+D 212 Ec3
+D 223 E4
+D 234 Ea5
+D 245 Eb5
+D 256 Ec5
+D 267 Ea6
+D 278 Eb6
+D 289 Ea7
+D 300 E8
+D 305 E9
+D 316 Eb7
+D 327 Ee1
+D 338 Ee2
+D 349 Ed3
+D 360 Ed5
+D 371 Ec6
+B 383 Column Listing      SOLVE NSF Using MIP From line 77
+E 386 y
+E 426 L
+E 466 S
+E 518 R1
+E 570 R2
+E 610 x
+E 638 sl
+E 660 temp
+E 678 Obj
+B 686 Range Statistics    SOLVE NSF Using MIP From line 77
+B 697 Model Statistics    SOLVE NSF Using MIP From line 77
+B 710 Solution Report     SOLVE NSF Using MIP From line 77

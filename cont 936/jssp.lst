@@ -1,0 +1,88 @@
+GAMS 45.7.0  64fbf3ce Jan 18, 2024          WEX-WEI x86 64bit/MS Windows - 04/29/24 01:26:50 Page 1
+G e n e r a l   A l g e b r a i c   M o d e l i n g   S y s t e m
+C o m p i l a t i o n
+
+
+   1  Sets i orders /1*3/, m machines /1*3/;
+   2  Alias(i,ii);
+   3  Alias(m,mm);
+   4   
+   5  Table C(i,m) cost of ith job on machine m
+   6       1   2   3
+   7  1    10  11  12
+   8  2    9   18  19
+   9  3    6   9   15;
+  10   
+  11  Table p(i,m) duration of each job in machine m
+  12       1   2   3
+  13  1    9   12  15
+  14  2    7   16  19
+  15  3    21  8   14;
+  16   
+  17  Parameter r(i)/1 1,2 5,3 4/;
+  18  Parameter d(i)/1 13,2 21,3 32/;
+  19   
+  20  Variables ts(i),obj,x(i,m),y(i,ii);
+  21  Free Variable obj;
+  22  Binary Variables x(i,m),y(i,ii);
+  23  Positive Variable ts(i);
+  24   
+  25   
+  26  Scalar U/55/;
+  27   
+  28  Equations sol,eq1(i,m),eq2(i),eq3(i),eq4(i),eq5(m),eq6(i),eq7(i),eq8(i),eq9(i);
+  29  eq1(i,m).. obj =e= sum((i,m),(C(i,m)*x(i,m)));
+****                           $125,125
+**** 125  Set is under control already
+  30  eq2(i).. ts(i) =g= r(i);
+  31  eq3(i).. ts(i) =l= d(i)- sum(m,(p(i,m)*x(i,m)));
+  32  eq4(i).. sum(m,x(i,m)) =l= 1;
+  33  eq5(m).. sum(m,(x(i,m)*p(i,m))) =l= smax(i,d(i)) - smin(i,r(i));
+****                $125 $149   $149
+**** 125  Set is under control already
+**** 149  Uncontrolled set entered as constant
+  34  eq6(i)$(ord(i)<>ord(ii)).. y(i,ii) + y(ii,i) =g= x(i,m) + x(ii,m) -1;
+****                       $154        $149    $149         $149    $149,149
+**** 149  Uncontrolled set entered as constant
+**** 154  Set for 'ord' is not controlled
+  35  eq7(i)$(ord(i)<>ord(ii)).. ts(ii) =g= ts(i) + sum(m,p(i,m)*x(i,m)) - U*(1-y(ii));
+****                       $154       $149                                          $149,148
+**** 148  Dimension different - The symbol is referenced with more/less
+****         indices as declared
+**** 149  Uncontrolled set entered as constant
+**** 154  Set for 'ord' is not controlled
+  36  eq8(i)$(ord(i)<>ord(ii)).. y(ii) + y(i) =l= 1;
+****                       $154      $149,148,148
+**** 148  Dimension different - The symbol is referenced with more/less
+****         indices as declared
+**** 149  Uncontrolled set entered as constant
+**** 154  Set for 'ord' is not controlled
+  37  eq9(i)$(ord(i)<>ord(ii)).. y(ii) + y(i) + x(i,m) + x(ii,mm) =l= 2;
+****                       $154      $149,148,148    $149    $149,149
+**** 148  Dimension different - The symbol is referenced with more/less
+****         indices as declared
+**** 149  Uncontrolled set entered as constant
+**** 154  Set for 'ord' is not controlled
+  38   
+  39  Model jssp /all/;
+  40  solve jssp using mip minimizing obj;
+****                                     $257
+**** 257  Solve statement not checked because of previous errors
+
+**** 27 ERROR(S)   0 WARNING(S)
+
+
+COMPILATION TIME     =        0.015 SECONDS      3 MB  45.7.0 64fbf3ce WEX-WEI
+
+
+USER: GAMS Community License for Sayan Dey Sarkar    G240209|0002AO-GEN
+      Indian Institute of Technology Guwahati,                  CL10139
+      License for teaching and research at degree granting institutions
+
+
+**** FILE SUMMARY
+
+Input      C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.gms
+Output     C:\Users\Sayan Dey Sarkar\Desktop\c++ hello\cont 936\jssp.lst
+
+**** USER ERROR(S) ENCOUNTERED
